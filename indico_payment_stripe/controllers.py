@@ -8,6 +8,7 @@
 """
 from __future__ import unicode_literals
 
+import stripe
 from flask import flash, redirect, request, Markup
 from flask_pluginengine import current_plugin
 from stripe import error as err
@@ -36,12 +37,38 @@ class RHStripeSuccess(RH):
         if not self.registration:
             raise BadRequest
 
+    def _get_event_settings(self, settings_name):
+        event_settings = current_plugin.event_settings
+        return event_settings.get(
+            self.registration.registration_form.event,
+            settings_name
+        )
+
     def _process(self):
         # We assume success was called because the transaction worked
         # TODO: Validate with stripe somehow.
-        paid = request.form['paid']
-        stripe_amount = request.form['amount']
-        stripe_currency = request.form['currency']
+        # Fetch the PaymentIntent
+
+        payment_intent_id = request.form.get('payment_intent', None)
+        if payment_intent is None:
+            raise BadRequest
+
+
+        use_event_api_keys = self._get_event_settings('use_event_api_keys')
+        sec_key = (
+            self._get_event_settings('sec_key')
+            if use_event_api_keys else
+            current_plugin.settings.get('sec_key')
+        )
+
+
+        stripe.api_key = sec_key
+        payment_intent = stripe.PaymentIntent.retrieve(
+            payment_intent_id
+        )
+
+        stripe_amount = payment_intent['amount_received']
+        stripe_currency = payment_intent['currency']
 
         register_transaction(
             registration=self.registration,
