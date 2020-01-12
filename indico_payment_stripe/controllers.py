@@ -39,7 +39,6 @@ class RHStripeSuccess(RH):
     def _process(self):
         # We assume success was called because the transaction worked
         # TODO: Validate with stripe somehow.
-        receipt_url = request.form['receipt_url']
         paid = request.form['paid']
         stripe_amount = request.form['amount']
         stripe_currency = request.form['currency']
@@ -57,7 +56,6 @@ class RHStripeSuccess(RH):
         )
         flash_msg = Markup(_(
             'Your payment request has been processed.'
-            ' See the receipt <a href="' + receipt_url + '">here</a>.'
         ))
         flash_type = 'success'
 
