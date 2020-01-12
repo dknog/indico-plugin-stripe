@@ -2,7 +2,6 @@
 <html>
     <head>
         <title>Payment Form</title>
-        <script src="https://js.stripe.com/v3/"></script>
     </head>
     <body>
         <dl class="i-data-list">
@@ -27,7 +26,7 @@
          const stripeurl = "https://js.stripe.com/v3/"
          $.getScript(stripeurl, function() {
              try {
-                 var stripe = Stripe({{ pub_key }});
+                 var stripe = Stripe('{{ pub_key }}');
 
                  var checkoutButton = document.getElementById('checkout-button');
                  checkoutButton.addEventListener('click', function() {
