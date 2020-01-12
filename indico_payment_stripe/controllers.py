@@ -125,6 +125,12 @@ class RHStripeSuccess(RH):
 class RHStripeCancel(RH):
     """ The transaction was cancelled """
 
+    def _process_args(self):
+        self.token = request.args['token']
+        self.registration = Registration.find_first(uuid=self.token)
+        if not self.registration:
+            raise BadRequest
+
     def _process(self):
         flash(_('You cancelled the payment process.'), 'info')
         return redirect(url_for('event_registration.display_regform', self.registration.locator.registrant))
