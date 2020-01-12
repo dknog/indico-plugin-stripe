@@ -39,10 +39,10 @@ class RHStripeSuccess(RH):
     def _process(self):
         # We assume success was called because the transaction worked
         # TODO: Validate with stripe somehow.
-        receipt_url = request.args['receipt_url']
-        paid = request.args['paid']
-        stripe_amount = request.args['amount']
-        stripe_currency = request.args['currency']
+        receipt_url = request.form['receipt_url']
+        paid = request.form['paid']
+        stripe_amount = request.form['amount']
+        stripe_currency = request.form['currency']
 
         register_transaction(
             registration=self.registration,
@@ -81,8 +81,8 @@ class RHStripeCancel(RH):
 
 
     def _process(self):
-        stripe_amount = request.args['amount']
-        stripe_currency = request.args['currency']
+        stripe_amount = request.form['amount']
+        stripe_currency = request.form['currency']
         register_transaction(
             registration=self.registration,
             amount=conv_from_stripe_amount(
