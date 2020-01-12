@@ -10,7 +10,7 @@ from __future__ import unicode_literals
 
 from indico.core.plugins import IndicoPluginBlueprint
 
-from indico_payment_stripe.controllers import RHStripe
+from indico_payment_stripe.controllers import RHStripeSuccess, RHStripeCancel
 
 
 blueprint = IndicoPluginBlueprint(
@@ -22,4 +22,5 @@ blueprint = IndicoPluginBlueprint(
     )
 )
 
-blueprint.add_url_rule('/handler', 'handler', RHStripe, methods=['POST'])
+blueprint.add_url_rule('/cancel', 'cancel', RHStripeCancel, methods=('GET', 'POST')) # TODO: Check if we need both GET/POST
+blueprint.add_url_rule('/success', 'success', RHStripeSuccess, methods=('GET', 'POST')) # TODO: Check if we need both GET/POST

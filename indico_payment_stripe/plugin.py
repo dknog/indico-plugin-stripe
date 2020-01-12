@@ -7,6 +7,7 @@
 
 """
 
+import stripe
 from wtforms.fields.core import BooleanField, StringField
 from wtforms.validators import DataRequired, Optional
 
@@ -142,7 +143,51 @@ class StripePaymentPlugin(PaymentPluginMixin, IndicoPlugin):
     def get_blueprints(self):
         return blueprint
 
+    def create_stripe_session(self, data):
+        """Setup a Stripe session
+
+        Keyword arguments:
+        data -- dictionary of purchase data
+        """
+        registration = data['registration']
+        stripe_amount = conv_to_stripe_amount(
+            registration.price,
+            registration.currency,
+        )
+        stripe_pub_key = (
+            data['event_settings']['pub_key']
+            if data['event_settings']['use_event_api_keys'] else
+            data['settings']['pub_key']
+        )
+        stripe.api_key = stripe_pub_key
+        session = stripe.checkout.Session.create(
+            customer_email=registration.email,
+            payment_method_types=['card'],
+            line_items=[{
+                'name': data['event_settings']['description'],
+                'amount': stripe_amount,
+                'currency': registration.currency.lower(),
+                'quantity': 1,
+            }],
+            success_url=url_for_plugin(
+                'payment_stripe.success',
+                registration.locator.uuid,
+                _external=True
+            ),
+            cancel_url=url_for_plugin(
+                'payment_stripe.cancel',
+                registration.locator.uuid,
+                _external=True,
+            )
+        )
+
+        return session
+
     def adjust_payment_form_data(self, data):
+        # We need to set up the transaction here already
+        session = self.create_stripe_session(data)
+        data['session_id'] = session['id']
+
         registration = data['registration']
         data['stripe_amount'] = conv_to_stripe_amount(
             registration.price,
