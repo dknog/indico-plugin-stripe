@@ -22,6 +22,8 @@ from indico.web.rh import RH
 
 from .utils import _, conv_to_stripe_amount, conv_from_stripe_amount
 
+from pprint import pformat
+
 
 __all__ = ['RHStripeSuccess', 'RHStripeCancel']
 
@@ -51,7 +53,7 @@ class RHStripeSuccess(RH):
 
         payment_intent_id = request.form.get('payment_intent', None)
         if payment_intent_id is None:
-            raise BadRequest
+            raise BadRequest(description=pformat(request.form))
 
 
         use_event_api_keys = self._get_event_settings('use_event_api_keys')
