@@ -154,12 +154,12 @@ class StripePaymentPlugin(PaymentPluginMixin, IndicoPlugin):
             registration.price,
             registration.currency,
         )
-        stripe_pub_key = (
-            data['event_settings']['pub_key']
+        stripe_sec_key = (
+            data['event_settings']['sec_key']
             if data['event_settings']['use_event_api_keys'] else
-            data['settings']['pub_key']
+            data['settings']['sec_key']
         )
-        stripe.api_key = stripe_pub_key
+        stripe.api_key = stripe_sec_key
         session = stripe.checkout.Session.create(
             customer_email=registration.email,
             payment_method_types=['card'],
