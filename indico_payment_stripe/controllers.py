@@ -50,7 +50,7 @@ class RHStripeSuccess(RH):
         # Fetch the PaymentIntent
 
         payment_intent_id = request.form.get('payment_intent', None)
-        if payment_intent is None:
+        if payment_intent_id is None:
             raise BadRequest
 
 
