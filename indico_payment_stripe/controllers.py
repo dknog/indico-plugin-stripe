@@ -35,6 +35,7 @@ class RHStripeSuccess(RH):
 
     def _process_args(self):
         self.token = request.args['token']
+        self.session = request.args['session_id']
         self.registration = Registration.find_first(uuid=self.token)
         if not self.registration:
             raise BadRequest
@@ -51,11 +52,6 @@ class RHStripeSuccess(RH):
         # TODO: Validate with stripe somehow.
         # Fetch the PaymentIntent
 
-        payment_intent_id = request.form.get('payment_intent', None)
-        if payment_intent_id is None:
-            raise BadRequest(description=pformat(request.form))
-
-
         use_event_api_keys = self._get_event_settings('use_event_api_keys')
         sec_key = (
             self._get_event_settings('sec_key')
@@ -65,8 +61,10 @@ class RHStripeSuccess(RH):
 
 
         stripe.api_key = sec_key
+        session = stripe.checkout.Session.retrieve(self.session)
+
         payment_intent = stripe.PaymentIntent.retrieve(
-            payment_intent_id
+            session['payment_intent']
         )
 
         stripe_amount = payment_intent['amount_received']

@@ -172,6 +172,7 @@ class StripePaymentPlugin(PaymentPluginMixin, IndicoPlugin):
             success_url=url_for_plugin(
                 'payment_stripe.success',
                 registration.locator.uuid,
+                session_id='{CHECKOUT_SESSION_ID}'
                 _external=True
             ),
             cancel_url=url_for_plugin(
