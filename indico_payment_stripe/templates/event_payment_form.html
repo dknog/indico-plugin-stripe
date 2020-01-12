@@ -24,7 +24,8 @@
             </dd>
         </dl>
         <script>
-         (function() {
+         const stripeurl = "https://js.stripe.com/v3/"
+         $.getScript(stripeurl, function() {
              try {
                  var stripe = Stripe({{ pub_key }});
 
@@ -45,7 +46,7 @@
              } catch (error) {
                  console.log(error);
              }
-         })();
+         });
 
 
         </script>
