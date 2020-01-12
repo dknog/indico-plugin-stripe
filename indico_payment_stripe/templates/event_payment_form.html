@@ -4,7 +4,6 @@
         <title>Payment Form</title>
     </head>
     <body>
-        <script src="https://js.stripe.com/v3"></script>
         <dl class="i-data-list">
             <dt>{% trans %}First name{% endtrans %}</dt>
             <dd>{{ registration.first_name }}</dd>
@@ -23,6 +22,7 @@
                 </button>
             </dd>
         </dl>
+        <script src="https://js.stripe.com/v3/"></script>
         <script>
          (function() {
              try {
