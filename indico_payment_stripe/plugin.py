@@ -194,11 +194,6 @@ class StripePaymentPlugin(PaymentPluginMixin, IndicoPlugin):
             registration.currency,
         )
         data['user_email'] = registration.email
-        data['handler_url'] = url_for_plugin(
-            'payment_stripe.handler',
-            registration.locator.uuid,
-            _external=True,
-        )
 
         data['pub_key'] = (
             data['event_settings']['pub_key']
