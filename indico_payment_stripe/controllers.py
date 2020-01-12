@@ -27,6 +27,12 @@ from pprint import pformat
 
 __all__ = ['RHStripeSuccess', 'RHStripeCancel']
 
+STRIPE_TRX_ACTION_MAP = {
+    'succeeded': TransactionAction.complete,
+    'failed': TransactionAction.reject,
+    'pending': TransactionAction.pending
+}
+
 
 class RHStripeSuccess(RH):
     """ Validate transaction and mark as paid """
@@ -58,76 +64,67 @@ class RHStripeSuccess(RH):
             if use_event_api_keys else
             current_plugin.settings.get('sec_key')
         )
-
-
-        stripe.api_key = sec_key
-        session = stripe.checkout.Session.retrieve(self.session)
-
-        payment_intent = stripe.PaymentIntent.retrieve(
-            session['payment_intent']
-        )
-
-        stripe_amount = payment_intent['amount_received']
-        stripe_currency = payment_intent['currency']
-
-        register_transaction(
-            registration=self.registration,
-            amount=conv_from_stripe_amount(
-                stripe_amount,
-                stripe_currency
-            ),
-            currency=stripe_currency,
-            action=TransactionAction.complete,
-            provider='stripe',
-            data=request.form,
-        )
-        flash_msg = Markup(_(
-            'Your payment request has been processed.'
-        ))
-        flash_type = 'success'
-
         reg_url = url_for(
             'event_registration.display_regform',
             self.registration.locator.registrant
         )
-        flash(flash_msg, flash_type)
-        return redirect(reg_url)
+
+        try:
+            stripe.api_key = sec_key
+            session = stripe.checkout.Session.retrieve(self.session)
+
+            payment_intent = stripe.PaymentIntent.retrieve(
+                session['payment_intent']
+            )
+
+            status = payment_intent['status']
+
+
+            stripe_amount = payment_intent['amount_received']
+            stripe_currency = payment_intent['currency']
+        except err.APIConnectionError as e:
+            current_plugin.logger.exception(e)
+            flash(
+                _(
+                    'There was a problem connecting to Stripe.'
+                    ' Please try again.'
+                ),
+                'error'
+            )
+
+        if status == 'succeeded':
+            register_transaction(
+                registration=self.registration,
+                amount=conv_from_stripe_amount(
+                    stripe_amount,
+                    stripe_currency
+                ),
+                currency=stripe_currency,
+                action=TransactionAction.complete,
+                provider='stripe',
+                data=request.form,
+            )
+            flash_msg = Markup(_(
+                'Your payment request has been processed.'
+            ))
+            flash_type = 'success'
+
+            flash(flash_msg, flash_type)
+            return redirect(reg_url)
+
+        else:
+            flash(_('The payment was not completed. Please retry'))
+            return redirect(url_for(
+                'event_registration.display_regform', self.registration.locator.registrant
+            ))
+
+
 
 
 
 class RHStripeCancel(RH):
     """ The transaction was cancelled """
 
-    def _process_args(self):
-        self.token = request.args['token']
-        self.registration = Registration.find_first(uuid=self.token)
-        if not self.registration:
-            raise BadRequest
-
-
     def _process(self):
-        stripe_amount = request.form['amount']
-        stripe_currency = request.form['currency']
-        register_transaction(
-            registration=self.registration,
-            amount=conv_from_stripe_amount(
-                stripe_amount,
-                stripe_currency
-            ),
-            currency=stripe_currency,
-            action=TransactionAction.reject,
-            provider='stripe',
-            data=request.form,
-        )
-
-        flash_msg = Markup(_(
-            'Your transaction was cancelled, please retry'
-        ))
-        flash_type = 'error'
-
-        reg_url = url_for(
-            'event_registration.display_regform',
-            self.registration.locator.registrant
-        )
-        flash(flash_msg, flash_type)
-        return redirect(reg_url)
+        flash(_('You cancelled the payment process.'), 'info')
+        return redirect(url_for('event_registration.display_regform', self.registration.locator.registrant))
