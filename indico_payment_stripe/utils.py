@@ -12,7 +12,7 @@ from decimal import Decimal
 from indico.util.i18n import make_bound_gettext
 
 
-gettext = _ = make_bound_gettext('payment_stripe')
+gettext = _ = make_bound_gettext("payment_stripe")
 
 
 # These are currencies which do not need to use decimals to represent its
@@ -20,30 +20,30 @@ gettext = _ = make_bound_gettext('payment_stripe')
 # The values are taken from https://stripe.com/docs/currencies#zero-decimal
 # as recommended by
 # https://groups.google.com/a/lists.stripe.com/forum/#!topic/api-discuss/IsiAW3uEfHQ
-ZERO_DECIMAL_CURRS = set([
-    'BIF',
-    'CLP',
-    'DJF',
-    'GNF',
-    'JPY',
-    'KMF',
-    'KRW',
-    'MGA',
-    'PYG',
-    'RWF',
-    'UGX',
-    'VND',
-    'VUV',
-    'XAF',
-    'XOF',
-    'XPF',
-])
+ZERO_DECIMAL_CURRS = set(
+    [
+        "BIF",
+        "CLP",
+        "DJF",
+        "GNF",
+        "JPY",
+        "KMF",
+        "KRW",
+        "MGA",
+        "PYG",
+        "RWF",
+        "UGX",
+        "VND",
+        "VUV",
+        "XAF",
+        "XOF",
+        "XPF",
+    ]
+)
 
 
 def conv_to_stripe_amount(
-    indico_amount,
-    curr,
-    zero_decimal_currs=ZERO_DECIMAL_CURRS
+    indico_amount, curr, zero_decimal_currs=ZERO_DECIMAL_CURRS
 ):
     """Converts the given Indico-stored amount to the one requested by Stripe.
 
@@ -61,15 +61,13 @@ def conv_to_stripe_amount(
     """
     return (
         int(indico_amount)
-        if curr.upper() in zero_decimal_currs else
-        int(indico_amount * 100)
+        if curr.upper() in zero_decimal_currs
+        else int(indico_amount * 100)
     )
 
 
 def conv_from_stripe_amount(
-    stripe_amount,
-    curr,
-    zero_decimal_currs=ZERO_DECIMAL_CURRS
+    stripe_amount, curr, zero_decimal_currs=ZERO_DECIMAL_CURRS
 ):
     """Converts the given amount used for Stripe to the one used by Indico.
 
@@ -86,6 +84,6 @@ def conv_from_stripe_amount(
     """
     return (
         float(stripe_amount)
-        if curr.upper() in zero_decimal_currs else
-        float(Decimal(str(stripe_amount)) / 100)
+        if curr.upper() in zero_decimal_currs
+        else float(Decimal(str(stripe_amount)) / 100)
     )
