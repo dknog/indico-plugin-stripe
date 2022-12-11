@@ -42,7 +42,10 @@ class RHStripeSuccess(RH):
     def _process_args(self):
         self.token = request.args["token"]
         self.session = request.args["session_id"]
-        self.registration = Registration.find_first(uuid=self.token)
+        self.registration = Registration.query.filter_by(
+            uuid=self.token
+        ).first()
+
         if not self.registration:
             raise BadRequest
 
@@ -120,7 +123,9 @@ class RHStripeCancel(RH):
 
     def _process_args(self):
         self.token = request.args["token"]
-        self.registration = Registration.find_first(uuid=self.token)
+        self.registration = Registration.query.filter_by(
+            uuid=self.token
+        ).first()
         if not self.registration:
             raise BadRequest
 
