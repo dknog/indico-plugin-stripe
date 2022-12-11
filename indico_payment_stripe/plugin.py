@@ -8,7 +8,7 @@
 """
 
 import stripe
-from wtforms.fields.core import BooleanField, StringField
+from wtforms.fields import BooleanField, StringField
 from wtforms.validators import DataRequired, Optional
 
 from indico.core.plugins import IndicoPlugin, url_for_plugin
