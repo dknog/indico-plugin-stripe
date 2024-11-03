@@ -9,7 +9,7 @@
 from __future__ import unicode_literals
 
 import stripe
-from flask import flash, redirect, request, Markup
+from flask import flash, redirect, request
 from flask_pluginengine import current_plugin
 from stripe import error as err
 from werkzeug.exceptions import BadRequest
@@ -35,16 +35,14 @@ STRIPE_TRX_ACTION_MAP = {
 
 
 class RHStripeSuccess(RH):
-    """ Validate transaction and mark as paid """
+    """Validate transaction and mark as paid"""
 
     CSRF_ENABLED = False
 
     def _process_args(self):
         self.token = request.args["token"]
         self.session = request.args["session_id"]
-        self.registration = Registration.query.filter_by(
-            uuid=self.token
-        ).first()
+        self.registration = Registration.query.filter_by(uuid=self.token).first()
 
         if not self.registration:
             raise BadRequest
@@ -75,9 +73,7 @@ class RHStripeSuccess(RH):
             stripe.api_key = sec_key
             session = stripe.checkout.Session.retrieve(self.session)
 
-            payment_intent = stripe.PaymentIntent.retrieve(
-                session["payment_intent"]
-            )
+            payment_intent = stripe.PaymentIntent.retrieve(session["payment_intent"])
 
             status = payment_intent["status"]
 
@@ -86,10 +82,7 @@ class RHStripeSuccess(RH):
         except err.APIConnectionError as e:
             current_plugin.logger.exception(e)
             flash(
-                _(
-                    "There was a problem connecting to Stripe."
-                    " Please try again."
-                ),
+                _("There was a problem connecting to Stripe." " Please try again."),
                 "error",
             )
 
@@ -102,7 +95,7 @@ class RHStripeSuccess(RH):
                 provider="stripe",
                 data=request.form,
             )
-            flash_msg = Markup(_("Your payment request has been processed."))
+            flash_msg = _("Your payment request has been processed.")
             flash_type = "success"
 
             flash(flash_msg, flash_type)
@@ -119,13 +112,11 @@ class RHStripeSuccess(RH):
 
 
 class RHStripeCancel(RH):
-    """ The transaction was cancelled """
+    """The transaction was cancelled"""
 
     def _process_args(self):
         self.token = request.args["token"]
-        self.registration = Registration.query.filter_by(
-            uuid=self.token
-        ).first()
+        self.registration = Registration.query.filter_by(uuid=self.token).first()
         if not self.registration:
             raise BadRequest
 

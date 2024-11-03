@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     indico_payment_stripe.plugin
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -50,9 +49,7 @@ class PluginSettingsForm(PaymentPluginSettingsFormBase):
     description = StringField(
         _("Description"),
         [Optional()],
-        description=_(
-            "A description of the product or service being purchased"
-        ),
+        description=_("A description of the product or service being purchased"),
     )
 
 
@@ -93,9 +90,7 @@ class EventSettingsForm(PaymentEventSettingsFormBase):
         _("Description"),
         [Optional()],
         default="Payment for conference",
-        description=_(
-            "A description of the product or service being purchased"
-        ),
+        description=_("A description of the product or service being purchased"),
     )
     require_postal_code = BooleanField(
         _("Require postal code input"),
@@ -141,9 +136,7 @@ class StripePaymentPlugin(PaymentPluginMixin, IndicoPlugin):
 
     @property
     def logo_url(self):
-        return url_for_plugin(
-            self.name + ".static", filename="images/logo.png"
-        )
+        return url_for_plugin(self.name + ".static", filename="images/logo.png")
 
     def get_blueprints(self):
         return blueprint
