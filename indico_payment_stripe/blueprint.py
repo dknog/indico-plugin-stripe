@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-    indico_payment_stripe.blueprint
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+indico_payment_stripe.blueprint
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    The plugin blueprint.
+The plugin blueprint.
 
 """
+
 from __future__ import unicode_literals
 
 from indico.core.plugins import IndicoPluginBlueprint

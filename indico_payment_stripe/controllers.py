@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
 """
-    indico_payment_stripe.controllers
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+indico_payment_stripe.controllers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Controllers used by the plugin.
+Controllers used by the plugin.
 
 """
+
 from __future__ import unicode_literals
 
 import stripe
@@ -82,7 +82,7 @@ class RHStripeSuccess(RH):
         except err.APIConnectionError as e:
             current_plugin.logger.exception(e)
             flash(
-                _("There was a problem connecting to Stripe." " Please try again."),
+                _("There was a problem connecting to Stripe. Please try again."),
                 "error",
             )
 

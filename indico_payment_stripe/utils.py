@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    indico_payment_stripe.utils
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+indico_payment_stripe.utils
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Shared utilities.
+Shared utilities.
 
 """
 
@@ -42,9 +42,7 @@ ZERO_DECIMAL_CURRS = set(
 )
 
 
-def conv_to_stripe_amount(
-    indico_amount, curr, zero_decimal_currs=ZERO_DECIMAL_CURRS
-):
+def conv_to_stripe_amount(indico_amount, curr, zero_decimal_currs=ZERO_DECIMAL_CURRS):
     """Converts the given Indico-stored amount to the one requested by Stripe.
 
     :param float indico_amount: The amount meant to be stored by Indico.
@@ -66,9 +64,7 @@ def conv_to_stripe_amount(
     )
 
 
-def conv_from_stripe_amount(
-    stripe_amount, curr, zero_decimal_currs=ZERO_DECIMAL_CURRS
-):
+def conv_from_stripe_amount(stripe_amount, curr, zero_decimal_currs=ZERO_DECIMAL_CURRS):
     """Converts the given amount used for Stripe to the one used by Indico.
 
     :param float indico_amount: The amount used for Stripe.

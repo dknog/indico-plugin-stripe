@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-    indico_payment_stripe
-    ~~~~~~~~~~~~~~~~~~~~~
+indico_payment_stripe
+~~~~~~~~~~~~~~~~~~~~~
 
-    Indico plugin for Stripe payment support.
+Indico plugin for Stripe payment support.
 
-    :license: MIT
+:license: MIT
 
 """
 
