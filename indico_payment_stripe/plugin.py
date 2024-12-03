@@ -166,9 +166,9 @@ class StripePaymentPlugin(PaymentPluginMixin, IndicoPlugin):
                         "unit_amount": stripe_amount,
                         "product_data": {
                             "name": data["event_settings"]["description"],
-                            "quantity": 1,
                         },
                     },
+                    "quantity": 1,
                 },
             ],
             mode="payment",
