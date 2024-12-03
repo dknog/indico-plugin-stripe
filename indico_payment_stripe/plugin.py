@@ -1,8 +1,8 @@
 """
-    indico_payment_stripe.plugin
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+indico_payment_stripe.plugin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    The actual plugin definitions.
+The actual plugin definitions.
 
 """
 
@@ -24,7 +24,6 @@ from .utils import _, conv_to_stripe_amount
 
 
 class PluginSettingsForm(PaymentPluginSettingsFormBase):
-
     pub_key = StringField(
         _("Publishable key"),
         [DataRequired()],
@@ -54,7 +53,6 @@ class PluginSettingsForm(PaymentPluginSettingsFormBase):
 
 
 class EventSettingsForm(PaymentEventSettingsFormBase):
-
     use_event_api_keys = BooleanField(
         _("Use event API keys"),
         [Optional()],
@@ -163,11 +161,16 @@ class StripePaymentPlugin(PaymentPluginMixin, IndicoPlugin):
             payment_method_types=["card"],
             line_items=[
                 {
-                    "name": data["event_settings"]["description"],
-                    "amount": stripe_amount,
-                    "currency": registration.currency.lower(),
-                    "quantity": 1,
-                }
+                    "price_data": {
+                        "currency": registration.currency.lower(),
+                        "unit_amount": stripe_amount,
+                        "product_data": {
+                            "name": data["event_settings"]["description"],
+                            "quantity": 1,
+                        },
+                    },
+                    "mode": "payment",
+                },
             ],
             success_url=url_for_plugin(
                 "payment_stripe.success",
