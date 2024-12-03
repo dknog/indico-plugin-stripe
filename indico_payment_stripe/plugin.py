@@ -169,9 +169,9 @@ class StripePaymentPlugin(PaymentPluginMixin, IndicoPlugin):
                             "quantity": 1,
                         },
                     },
-                    "mode": "payment",
                 },
             ],
+            mode="payment",
             success_url=url_for_plugin(
                 "payment_stripe.success",
                 registration.locator.uuid,
